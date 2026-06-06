@@ -1,20 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
 
 :root {
-  --page: #eef3f8;
-  --surface: rgba(255, 255, 255, 0.7);
-  --surface-strong: rgba(255, 255, 255, 0.88);
-  --glass: rgba(255, 255, 255, 0.58);
-  --glass-edge: rgba(255, 255, 255, 0.82);
-  --ink: #172033;
-  --muted: #68758a;
-  --line: rgba(133, 154, 184, 0.2);
-  --green: #0f766e;
-  --blue: #1d4ed8;
-  --blue-soft: #dbe7f6;
-  --amber: #b45309;
-  --purple: #1e3a8a;
-  --shadow: 0 24px 70px rgba(21, 34, 63, 0.12);
+  --page: #050b16;
+  --surface: rgba(11, 19, 34, 0.72);
+  --surface-strong: rgba(9, 15, 28, 0.92);
+  --glass: rgba(10, 18, 32, 0.82);
+  --glass-edge: rgba(95, 131, 220, 0.18);
+  --ink: #eef4ff;
+  --muted: #92a3c3;
+  --line: rgba(115, 145, 208, 0.16);
+  --green: #2dd4bf;
+  --blue: #7ea0ff;
+  --blue-soft: rgba(126, 160, 255, 0.14);
+  --amber: #f0b44c;
+  --purple: #8b9dfd;
+  --shadow: 0 30px 90px rgba(1, 7, 20, 0.48);
   font-family:
     'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--ink);
@@ -34,8 +34,9 @@ body {
   min-height: 100svh;
   margin: 0;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(238, 243, 248, 0.78)),
-    linear-gradient(115deg, #f8fafc 0%, #e8eef6 46%, #f4f7fa 100%);
+    radial-gradient(circle at 20% 10%, rgba(59, 130, 246, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 0%, rgba(99, 102, 241, 0.16), transparent 26%),
+    linear-gradient(135deg, #050b16 0%, #071425 42%, #09172d 100%);
 }
 
 button,

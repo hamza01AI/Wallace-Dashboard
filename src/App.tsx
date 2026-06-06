@@ -56,14 +56,32 @@ type NewsReport = {
   sections: NewsSection[]
 }
 
-type View = 'overview' | 'news' | 'work' | 'deals' | 'tenders'
+type View = 'overview' | 'work' | 'deals' | 'tenders'
 
-const NAV_ITEMS: Array<[View, string, string]> = [
-  ['overview', 'Overview', 'Usage and system'],
-  ['news', 'News intel', 'Latest research'],
-  ['work', 'CRM', 'Work proposals'],
-  ['deals', 'Deals', 'Acquisitions'],
-  ['tenders', 'Tenders', 'Pipeline watch'],
+type NavItem = {
+  view: View
+  label: string
+  caption: string
+  badge: string
+  icon: string
+}
+
+type UtilityItem = {
+  label: string
+  caption: string
+  icon: string
+}
+
+const NAV_ITEMS: NavItem[] = [
+  { view: 'overview', label: 'Overview', caption: 'Usage and system', badge: '01', icon: '⌂' },
+  { view: 'work', label: 'CRM', caption: 'Work proposals', badge: '02', icon: '▦' },
+  { view: 'deals', label: 'Deals', caption: 'Acquisitions', badge: '03', icon: '◆' },
+  { view: 'tenders', label: 'Tenders', caption: 'Pipeline watch', badge: '04', icon: '△' },
+]
+
+const UTILITY_ITEMS: UtilityItem[] = [
+  { label: 'Docs', caption: 'Workspace notes', icon: '⌘' },
+  { label: 'Settings', caption: 'System options', icon: '⚙' },
 ]
 
 const moneyFields = [
@@ -139,17 +157,6 @@ function formatReportTime(value: string) {
   }).format(date)
 }
 
-function formatNextIntelTime(value: string) {
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return 'Unknown'
-  return new Intl.DateTimeFormat('en-AU', {
-    day: '2-digit',
-    month: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  }).format(new Date(date.getTime() + 24 * 60 * 60 * 1000))
-}
-
 function daysUntil(value: unknown) {
   if (!value) return null
   const target = new Date(String(value))
@@ -217,50 +224,114 @@ function Sidebar({
   onViewChange,
   variant = 'desktop',
   open = false,
+  collapsed = false,
+  onToggleCollapse,
   onClose,
+  totalRecords,
+  usageLabel,
+  refreshLabel,
+  generatedAt,
 }: {
   activeView: View
   onViewChange: (view: View) => void
   variant?: 'desktop' | 'mobile'
   open?: boolean
+  collapsed?: boolean
+  onToggleCollapse?: () => void
   onClose?: () => void
+  totalRecords: number
+  usageLabel: string
+  refreshLabel: string
+  generatedAt: string
 }) {
   return (
     <aside
-      className={`sidebar sidebar-${variant} ${variant === 'mobile' && open ? 'is-open' : ''}`}
+      className={[
+        'sidebar',
+        `sidebar-${variant}`,
+        variant === 'mobile' && open ? 'is-open' : '',
+        variant === 'desktop' && collapsed ? 'is-collapsed' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-hidden={variant === 'mobile' ? !open : undefined}
     >
       <div className="sidebar-header">
         <div className="brand-lockup">
           <span>W</span>
-          <div>
+          <div className="brand-copy">
             <strong>Wallace</strong>
             <p>Control room</p>
           </div>
         </div>
-        {variant === 'mobile' ? (
-          <button className="sidebar-close" type="button" onClick={onClose} aria-label="Close menu">
-            Close
-          </button>
-        ) : null}
+        <div className="sidebar-actions">
+          {variant === 'desktop' ? (
+            <button
+              className="sidebar-toggle"
+              type="button"
+              onClick={onToggleCollapse}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? '›' : '‹'}
+            </button>
+          ) : (
+            <button className="sidebar-close" type="button" onClick={onClose} aria-label="Close menu">
+              Close
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="sidebar-search">
+        <span aria-hidden="true">⌕</span>
+        <input aria-label="Search dashboard" placeholder="Search workspace" />
       </div>
       <button className="primary-action" onClick={() => onViewChange('work')} type="button">
-        Open CRM
+        <strong>Open CRM</strong>
         <span>+</span>
       </button>
-      <nav aria-label="Dashboard sections">
-        {NAV_ITEMS.map(([value, label, caption]) => (
+      <nav aria-label="Dashboard sections" className="sidebar-nav">
+        {NAV_ITEMS.map((item) => (
           <button
-            key={value}
-            className={activeView === value ? 'active' : ''}
-            onClick={() => onViewChange(value)}
+            key={item.view}
+            className={activeView === item.view ? 'active' : ''}
+            onClick={() => onViewChange(item.view)}
             type="button"
           >
-            <strong>{label}</strong>
-            <span>{caption}</span>
+            <i aria-hidden="true">{item.icon}</i>
+            <div className="nav-copy">
+              <strong>{item.label}</strong>
+              <span>{item.caption}</span>
+            </div>
+            <b aria-hidden="true">{item.badge}</b>
+          </button>
+        ))}
+        <div className="sidebar-divider" />
+        {UTILITY_ITEMS.map((item) => (
+          <button key={item.label} className="utility-item" type="button">
+            <i aria-hidden="true">{item.icon}</i>
+            <div className="nav-copy">
+              <strong>{item.label}</strong>
+              <span>{item.caption}</span>
+            </div>
           </button>
         ))}
       </nav>
+      <div className="sidebar-footer">
+        <div className="sidebar-stat">
+          <span>Total records</span>
+          <strong>{totalRecords}</strong>
+        </div>
+        <div className="sidebar-stat">
+          <span>Model usage</span>
+          <strong>{usageLabel}</strong>
+        </div>
+        <div className="sidebar-stat">
+          <span>Workspace refresh</span>
+          <strong>{refreshLabel}</strong>
+        </div>
+        <p>Shell updated {formatReportTime(generatedAt)}</p>
+      </div>
     </aside>
   )
 }
@@ -278,7 +349,6 @@ function MobileHeader({
 }) {
   const labels: Record<View, string> = {
     overview: 'Overview',
-    news: 'News intel',
     work: 'CRM',
     deals: 'Deals',
     tenders: 'Tenders',
@@ -288,7 +358,7 @@ function MobileHeader({
     <header className="mobile-header">
       <div className="brand-lockup mobile-brand">
         <span>W</span>
-        <div>
+        <div className="brand-copy">
           <strong>Wallace</strong>
           <p>{labels[activeView]}</p>
         </div>
@@ -303,6 +373,7 @@ function MobileHeader({
           onClick={onMenuToggle}
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
+          title={menuOpen ? 'Close menu' : 'Open menu'}
         >
           <span className="mobile-menu-icon" aria-hidden="true">
             <span />
@@ -363,171 +434,6 @@ function FieldCheck({ data, connected }: { data: DashboardData; connected: boole
         <span>Money fields</span>
         <strong>{populatedMoney.length || 'None populated yet'}</strong>
       </div>
-    </section>
-  )
-}
-
-function NewsSources({ sources }: { sources?: NewsSource[] }) {
-  if (!sources?.length) return null
-
-  return (
-    <div className="news-sources">
-      {sources.map((source) => (
-        <a key={`${source.label}-${source.url}`} href={source.url} target="_blank" rel="noreferrer">
-          {source.label}
-        </a>
-      ))}
-    </div>
-  )
-}
-
-function NewsSectionCard({ section }: { section: NewsSection }) {
-  const isGrowth = section.key === 'growth-radar'
-
-  return (
-    <article className={`news-section-card ${isGrowth ? 'news-growth-card' : ''}`}>
-      <div className="section-title inline-title">
-        <div>
-          <p>{section.title}</p>
-          <h2>{section.headline}</h2>
-        </div>
-      </div>
-
-      <ul className="news-bullet-list">
-        {section.bullets.map((bullet) => (
-          <li key={bullet}>{bullet}</li>
-        ))}
-      </ul>
-
-      {section.items?.length ? (
-        <div className="news-item-list">
-          {section.items.map((item, index) => (
-            <article className={`news-item ${item.urgent ? 'urgent' : ''}`} key={`${section.key}-${index}`}>
-              {item.urgent ? <span className="urgent-chip">⚡ Urgent</span> : null}
-              {isGrowth ? (
-                <>
-                  <strong>{item.title || 'Opportunity'}</strong>
-                  <div className="news-field">
-                    <span>Location</span>
-                    <p>{item.location || 'Not set'}</p>
-                  </div>
-                  <div className="news-field">
-                    <span>Opportunity</span>
-                    <p>{item.opportunity || item.summary || 'Not set'}</p>
-                  </div>
-                  <div className="news-field">
-                    <span>Recommended action</span>
-                    <p>{item.recommendedAction || 'Follow up fast and qualify fit.'}</p>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <strong>{item.title || 'Item'}</strong>
-                  {item.summary ? <p className="news-summary">{item.summary}</p> : null}
-                  {item.bullets?.length ? (
-                    <ul className="mini-bullets">
-                      {item.bullets.map((bullet) => (
-                        <li key={bullet}>{bullet}</li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </>
-              )}
-              <NewsSources sources={item.sources} />
-            </article>
-          ))}
-        </div>
-      ) : null}
-    </article>
-  )
-}
-
-function NewsOverviewPanel({ report }: { report: NewsReport | null | undefined }) {
-  if (!report) {
-    return (
-      <section className="panel full-panel news-empty-panel">
-        <div className="section-title">
-          <p>News intel</p>
-          <h2>Waiting for the first crawl</h2>
-        </div>
-        <p>The cron job will drop the latest report here and push the same summary to Telegram.</p>
-      </section>
-    )
-  }
-
-  const growth = report.sections.find((section) => section.key === 'growth-radar')
-  const urgentItems = report.sections.flatMap((section) => section.items || []).filter((item) => item.urgent)
-
-  return (
-    <section className="panel full-panel news-dashboard-panel">
-      <div className="section-title inline-title">
-        <div>
-          <p>News intel</p>
-          <h2>{report.headline}</h2>
-        </div>
-        <span>Latest report {formatReportTime(report.generatedAt)}</span>
-      </div>
-
-      <div className="news-status-strip">
-        <span>
-          Latest update <b>{formatReportTime(report.generatedAt)}</b>
-        </span>
-        <span>
-          ⚡ Urgent <b>{report.urgentCount ?? urgentItems.length}</b>
-        </span>
-        <span>
-          Sources <b>{report.sourceCount ?? 0}</b>
-        </span>
-      </div>
-
-      {growth ? <NewsSectionCard section={growth} /> : null}
-
-      <div className="news-section-grid">
-        {report.sections
-          .filter((section) => section.key !== 'growth-radar')
-          .map((section) => (
-            <NewsSectionCard key={section.key} section={section} />
-          ))}
-      </div>
-    </section>
-  )
-}
-
-function NewsTeaserPanel({ report }: { report: NewsReport | null | undefined }) {
-  if (!report) {
-    return (
-      <section className="panel full-panel news-teaser-panel">
-        <div className="section-title">
-          <p>News intel</p>
-          <h2>Latest report is waiting</h2>
-        </div>
-        <p className="teaser-copy">Open the News intel tab from the sidebar when you want the full report.</p>
-      </section>
-    )
-  }
-
-  return (
-    <section className="panel news-teaser-panel">
-      <div className="section-title inline-title">
-        <div>
-          <p>News intel</p>
-          <h2>{report.headline}</h2>
-        </div>
-      </div>
-      <div className="news-status-strip compact">
-        <span>
-          Latest <b>{formatReportTime(report.generatedAt)}</b>
-        </span>
-        <span>
-          Urgent <b>{report.urgentCount ?? 0}</b>
-        </span>
-        <span>
-          Next intel <b>{formatNextIntelTime(report.generatedAt)}</b>
-        </span>
-      </div>
-      <p className="teaser-copy">
-        {report.telegramSummary || 'Open the sidebar tab to read the full breakdown.'}
-      </p>
     </section>
   )
 }
@@ -663,6 +569,7 @@ function App() {
   const [reloadTick, setReloadTick] = useState(0)
   const [activeView, setActiveView] = useState<View>('overview')
   const [menuOpen, setMenuOpen] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -692,10 +599,6 @@ function App() {
       window.clearInterval(timer)
     }
   }, [reloadTick])
-
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [activeView])
 
   useEffect(() => {
     function handleResize() {
@@ -738,7 +641,6 @@ function App() {
       proposalStatuses: statusGroups(proposals),
       acquisitionStages: statusGroups(acquisitions, 'Stage'),
       tenderStatuses: statusGroups(tenders),
-      news: data.news ?? null,
     }
   }, [data])
 
@@ -753,15 +655,43 @@ function App() {
     )
   }
 
+  const sidebarUsageLabel =
+    data.usage?.models?.[0]?.model && data.usage?.models?.[0]?.totalCostUSD !== undefined
+      ? usd(data.usage.models[0].totalCostUSD)
+      : data.usage?.message || 'Offline'
+  const sidebarRefreshLabel = formatReportTime(data.generatedAt)
+  const sidebarTotalRecords = summary.proposals.length + summary.acquisitions.length + summary.tenders.length
+  const handleViewChange = (view: View) => {
+    setActiveView(view)
+    setMenuOpen(false)
+  }
+
   return (
-    <main className="app-shell">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} variant="desktop" />
+    <main
+      className="app-shell"
+      style={{ '--sidebar-width': sidebarCollapsed ? '94px' : '282px' } as CSSProperties}
+    >
       <Sidebar
         activeView={activeView}
-        onViewChange={setActiveView}
+        onViewChange={handleViewChange}
+        variant="desktop"
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed((value) => !value)}
+        totalRecords={sidebarTotalRecords}
+        usageLabel={sidebarUsageLabel}
+        refreshLabel={sidebarRefreshLabel}
+        generatedAt={data.generatedAt}
+      />
+      <Sidebar
+        activeView={activeView}
+        onViewChange={handleViewChange}
         variant="mobile"
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
+        totalRecords={sidebarTotalRecords}
+        usageLabel={sidebarUsageLabel}
+        refreshLabel={sidebarRefreshLabel}
+        generatedAt={data.generatedAt}
       />
       {menuOpen ? (
         <button
@@ -794,10 +724,15 @@ function App() {
 
       {activeView === 'overview' && (
         <>
-          <header className="app-header">
+          <header className="app-header app-header-hero">
             <div>
               <p>Wallace dashboard</p>
               <h1>Overview</h1>
+              <span>Composed for dense reading, fast scanning, and clear hierarchy.</span>
+            </div>
+            <div className="header-chip">
+              <span>Live shell</span>
+              <strong>{error ? 'Offline mode' : 'Connected'}</strong>
             </div>
           </header>
 
@@ -815,7 +750,7 @@ function App() {
               note={
                 error
                   ? 'Browse the dashboard while Airtable reconnects'
-                  : `${summary.proposals.length + summary.acquisitions.length + summary.tenders.length} total records indexed`
+                  : `${sidebarTotalRecords} total records indexed`
               }
               icon="A"
               tone={error ? 'amber' : 'green'}
@@ -828,16 +763,10 @@ function App() {
               tone="amber"
             />
             <StatCard
-              label="Follow-ups"
-              value={summary.nextActions.length}
-              note="Dated acquisition actions"
-              icon="N"
-            />
-            <StatCard
-              label="News sync"
-              value={summary.news ? formatReportTime(summary.news.generatedAt) : 'Pending'}
-              note={summary.news ? `${summary.news.urgentCount ?? 0} urgent items flagged` : 'Awaiting the first cron run'}
-              icon="!"
+              label="Open tenders"
+              value={summary.openTenders.length}
+              note="Live tenders still in the pipeline"
+              icon="T"
               tone="blue"
             />
           </section>
@@ -846,8 +775,6 @@ function App() {
             <section className="panel wide-panel model-panel">
               <ModelUsagePanel usage={data.usage} generatedAt={data.generatedAt} />
             </section>
-
-            <NewsTeaserPanel report={summary.news} />
 
             <section className="panel trend-panel">
               <div className="section-title">
@@ -901,58 +828,8 @@ function App() {
               </ul>
             </section>
 
-            <section className="purple-card">
-              <strong>{summary.proposals.length + summary.acquisitions.length + summary.tenders.length}</strong>
-              <span>records synced</span>
-              <div className="sparkline" />
-              <p>Airtable live data</p>
-            </section>
-
             <FieldCheck data={data} connected={!error} />
           </section>
-        </>
-      )}
-
-      {activeView === 'news' && (
-        <>
-          <header className="app-header">
-            <div>
-              <p>News intelligence</p>
-              <h1>News intel</h1>
-            </div>
-          </header>
-
-          <section className="grid stats-grid">
-            <StatCard
-              label="Latest"
-              value={summary.news ? formatReportTime(summary.news.generatedAt) : 'Pending'}
-              note={summary.news?.headline || 'Cron has not written a report yet'}
-              icon="R"
-              tone="blue"
-            />
-            <StatCard
-              label="Urgent"
-              value={summary.news?.urgentCount ?? 0}
-              note="⚡ Time-sensitive leads and alerts"
-              icon="!"
-              tone="amber"
-            />
-            <StatCard
-              label="Links"
-              value={summary.news?.sourceCount ?? 0}
-              note="Links captured in the report"
-              icon="L"
-              tone="green"
-            />
-            <StatCard
-              label="Next"
-              value={summary.news ? formatNextIntelTime(summary.news.generatedAt) : 'Pending'}
-              note="The next scheduled news refresh"
-              icon="N"
-            />
-          </section>
-
-          <NewsOverviewPanel report={summary.news} />
         </>
       )}
 
