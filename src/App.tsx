@@ -139,6 +139,17 @@ function formatReportTime(value: string) {
   }).format(date)
 }
 
+function formatNextIntelTime(value: string) {
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Unknown'
+  return new Intl.DateTimeFormat('en-AU', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date.getTime() + 24 * 60 * 60 * 1000))
+}
+
 function daysUntil(value: unknown) {
   if (!value) return null
   const target = new Date(String(value))
@@ -204,18 +215,34 @@ function StatCard({
 function Sidebar({
   activeView,
   onViewChange,
+  variant = 'desktop',
+  open = false,
+  onClose,
 }: {
   activeView: View
   onViewChange: (view: View) => void
+  variant?: 'desktop' | 'mobile'
+  open?: boolean
+  onClose?: () => void
 }) {
   return (
-    <aside className="sidebar sidebar-desktop">
-      <div className="brand-lockup">
-        <span>W</span>
-        <div>
-          <strong>Wallace</strong>
-          <p>Control room</p>
+    <aside
+      className={`sidebar sidebar-${variant} ${variant === 'mobile' && open ? 'is-open' : ''}`}
+      aria-hidden={variant === 'mobile' ? !open : undefined}
+    >
+      <div className="sidebar-header">
+        <div className="brand-lockup">
+          <span>W</span>
+          <div>
+            <strong>Wallace</strong>
+            <p>Control room</p>
+          </div>
         </div>
+        {variant === 'mobile' ? (
+          <button className="sidebar-close" type="button" onClick={onClose} aria-label="Close menu">
+            Close
+          </button>
+        ) : null}
       </div>
       <button className="primary-action" onClick={() => onViewChange('work')} type="button">
         Open CRM
@@ -241,9 +268,13 @@ function Sidebar({
 function MobileHeader({
   generatedAt,
   activeView,
+  onMenuToggle,
+  menuOpen,
 }: {
   generatedAt: string
   activeView: View
+  onMenuToggle: () => void
+  menuOpen: boolean
 }) {
   const labels: Record<View, string> = {
     overview: 'Overview',
@@ -262,34 +293,23 @@ function MobileHeader({
           <p>{labels[activeView]}</p>
         </div>
       </div>
-      <time>
-        Updated {new Date(generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-      </time>
-    </header>
-  )
-}
-
-function MobileBottomNav({
-  activeView,
-  onViewChange,
-}: {
-  activeView: View
-  onViewChange: (view: View) => void
-}) {
-  return (
-    <nav className="mobile-bottom-nav" aria-label="Dashboard sections">
-      {NAV_ITEMS.map(([value, label]) => (
+      <div className="mobile-header-meta">
+        <time>
+          Updated {new Date(generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </time>
         <button
-          key={value}
+          className="mobile-menu-button"
           type="button"
-          className={activeView === value ? 'active' : ''}
-          onClick={() => onViewChange(value)}
-          aria-current={activeView === value ? 'page' : undefined}
+          onClick={onMenuToggle}
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={menuOpen}
         >
-          {label}
+          <span />
+          <span />
+          <span />
         </button>
-      ))}
-    </nav>
+      </div>
+    </header>
   )
 }
 
@@ -470,6 +490,45 @@ function NewsOverviewPanel({ report }: { report: NewsReport | null | undefined }
   )
 }
 
+function NewsTeaserPanel({ report }: { report: NewsReport | null | undefined }) {
+  if (!report) {
+    return (
+      <section className="panel full-panel news-teaser-panel">
+        <div className="section-title">
+          <p>News intel</p>
+          <h2>Latest report is waiting</h2>
+        </div>
+        <p className="teaser-copy">Open the News intel tab from the sidebar when you want the full report.</p>
+      </section>
+    )
+  }
+
+  return (
+    <section className="panel news-teaser-panel">
+      <div className="section-title inline-title">
+        <div>
+          <p>News intel</p>
+          <h2>{report.headline}</h2>
+        </div>
+      </div>
+      <div className="news-status-strip compact">
+        <span>
+          Latest <b>{formatReportTime(report.generatedAt)}</b>
+        </span>
+        <span>
+          Urgent <b>{report.urgentCount ?? 0}</b>
+        </span>
+        <span>
+          Next intel <b>{formatNextIntelTime(report.generatedAt)}</b>
+        </span>
+      </div>
+      <p className="teaser-copy">
+        {report.telegramSummary || 'Open the sidebar tab to read the full breakdown.'}
+      </p>
+    </section>
+  )
+}
+
 function StatusBreakdown({ groups }: { groups: Record<string, number> }) {
   const rows = Object.entries(groups)
     .sort((a, b) => b[1] - a[1])
@@ -600,6 +659,7 @@ function App() {
   const [error, setError] = useState<string | null>(null)
   const [reloadTick, setReloadTick] = useState(0)
   const [activeView, setActiveView] = useState<View>('overview')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -629,6 +689,19 @@ function App() {
       window.clearInterval(timer)
     }
   }, [reloadTick])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [activeView])
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 920) setMenuOpen(false)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const summary = useMemo(() => {
     if (!data) return null
@@ -679,7 +752,22 @@ function App() {
 
   return (
     <main className="app-shell">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar activeView={activeView} onViewChange={setActiveView} variant="desktop" />
+      <Sidebar
+        activeView={activeView}
+        onViewChange={setActiveView}
+        variant="mobile"
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      />
+      {menuOpen ? (
+        <button
+          type="button"
+          className="mobile-backdrop"
+          aria-label="Close menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      ) : null}
 
       <section className="workspace">
         {error ? (
@@ -693,7 +781,12 @@ function App() {
             </button>
           </section>
         ) : null}
-        <MobileHeader generatedAt={data.generatedAt} activeView={activeView} />
+        <MobileHeader
+          generatedAt={data.generatedAt}
+          activeView={activeView}
+          onMenuToggle={() => setMenuOpen((value) => !value)}
+          menuOpen={menuOpen}
+        />
         <TopBar generatedAt={data.generatedAt} />
 
       {activeView === 'overview' && (
@@ -747,7 +840,7 @@ function App() {
           </section>
 
           <section className="dashboard-grid">
-            <NewsOverviewPanel report={summary.news} />
+            <NewsTeaserPanel report={summary.news} />
 
             <section className="panel trend-panel">
               <div className="section-title">
@@ -822,37 +915,37 @@ function App() {
           <header className="app-header">
             <div>
               <p>News intelligence</p>
-              <h1>Latest report</h1>
+              <h1>News intel</h1>
             </div>
           </header>
 
           <section className="grid stats-grid">
             <StatCard
-              label="Latest report"
+              label="Latest"
               value={summary.news ? formatReportTime(summary.news.generatedAt) : 'Pending'}
               note={summary.news?.headline || 'Cron has not written a report yet'}
               icon="R"
               tone="blue"
             />
             <StatCard
-              label="Urgent items"
+              label="Urgent"
               value={summary.news?.urgentCount ?? 0}
               note="⚡ Time-sensitive leads and alerts"
               icon="!"
               tone="amber"
             />
             <StatCard
-              label="Source links"
+              label="Links"
               value={summary.news?.sourceCount ?? 0}
               note="Links captured in the report"
               icon="L"
               tone="green"
             />
             <StatCard
-              label="Telegram"
-              value={summary.news ? 'Ready' : 'Pending'}
-              note="Same summary is sent to Telegram"
-              icon="T"
+              label="Next"
+              value={summary.news ? formatNextIntelTime(summary.news.generatedAt) : 'Pending'}
+              note="The next scheduled news refresh"
+              icon="N"
             />
           </section>
 
@@ -990,7 +1083,6 @@ function App() {
         </>
       )}
       </section>
-      <MobileBottomNav activeView={activeView} onViewChange={setActiveView} />
     </main>
   )
 }
