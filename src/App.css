@@ -1209,40 +1209,61 @@
   }
 
   .sidebar {
-    position: static;
+    position: sticky;
+    top: 0;
     grid-template-rows: auto auto auto;
     height: auto;
-    padding: 20px;
+    gap: 14px;
+    padding: 16px 16px 14px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
   }
 
   .sidebar nav {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    display: flex;
+    gap: 10px;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .sidebar nav::-webkit-scrollbar {
+    display: none;
   }
 
   .sidebar button:not(.primary-action) {
-    min-height: 76px;
+    flex: 0 0 auto;
+    min-width: 152px;
+    min-height: 54px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.42);
+  }
+
+  .sidebar button:not(.primary-action) span {
+    display: none;
+  }
+
+  .sidebar button.active {
+    background: rgba(255, 255, 255, 0.82);
   }
 
   .workspace {
-    padding: 0 20px 32px;
+    padding: 0 16px 28px;
   }
 
   .topbar {
-    margin: 0 -20px 22px;
-    padding: 0 20px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    margin: 0 -16px 18px;
+    padding: 14px 16px;
   }
 
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 640px) {
-  .topbar {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-    padding-block: 14px;
   }
 
   .search-box {
@@ -1251,11 +1272,35 @@
 
   .topbar-meta {
     flex-wrap: wrap;
-    gap: 12px;
+    justify-content: space-between;
+    gap: 10px 12px;
+  }
+
+  .status-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .status-banner button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    gap: 10px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .topbar-meta {
+    justify-content: flex-start;
   }
 
   .sidebar nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .stats-grid,
@@ -1279,12 +1324,48 @@
     grid-column: auto;
   }
 
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
   .panel {
     padding: 18px;
+    border-radius: 20px;
   }
 
   .stat {
     grid-template-columns: 48px minmax(0, 1fr) 20px;
     padding: 18px;
+    border-radius: 20px;
+  }
+
+  .status-banner {
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+
+  .status-banner p {
+    font-size: 0.84rem;
+  }
+
+  .record-row,
+  .empty-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .record-side {
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  .news-section-card,
+  .news-growth-card,
+  .purple-card {
+    border-radius: 20px;
+  }
+
+  .chart-split {
+    gap: 18px;
   }
 }
