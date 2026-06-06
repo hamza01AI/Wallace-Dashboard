@@ -1,0 +1,264 @@
+{
+  "generatedAt": "2026-06-06T20:10:33+10:00",
+  "timezone": "Australia/Sydney",
+  "headline": "Sydney office churn, public tenders, and July compliance deadlines are moving together",
+  "urgentCount": 2,
+  "sourceCount": 15,
+  "telegramSummary": "⚡ 1 Jul deadlines are the big one: award wages rise 4.75% and payday super switches to 7-business-day settlement. Growth Radar: Town Hall Square, NSW LRS's CBD move, and North Sydney tenant churn keep the services pipeline alive. buy.nsw still has cleaning/housekeeping work open. Dashboard: http://localhost:5173/ | /Users/va/Desktop/Wallace Dashboard.webloc\nSources: https://www.fwc.gov.au/hearings-decisions/major-cases/annual-wage-reviews/annual-wage-review-2026 | https://buy.nsw.gov.au/opportunity/search?page=12&sort=Ascending | https://www.cityofsydney.nsw.gov.au/building-new-infrastructure/town-hall-square",
+  "sections": [
+    {
+      "key": "growth-radar",
+      "title": "1. Growth Radar",
+      "headline": "CBD churn is still creating service work, especially around Town Hall and North Sydney.",
+      "bullets": [
+        "Town Hall Square keeps a long construction, pre-DA, and post-DA service pipeline alive.",
+        "North Sydney is still absorbing premium office relocations into metro-linked stock.",
+        "CBD office moves continue to create pre-move, post-move, and strip-out demand."
+      ],
+      "items": [
+        {
+          "title": "Town Hall Square remains a long-tail opportunity",
+          "location": "Sydney CBD",
+          "opportunity": "Future construction-adjacent cleaning, hoarding, event, and site-support work.",
+          "recommendedAction": "Map nearby property managers now and keep a late-2026 pitch list ready.",
+          "summary": "The City of Sydney says concept design runs through mid-2026, the DA is targeted for late 2026, demolition and construction begin in 2028, and completion is due in 2031.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "City of Sydney",
+              "url": "https://www.cityofsydney.nsw.gov.au/building-new-infrastructure/town-hall-square"
+            }
+          ]
+        },
+        {
+          "title": "NSW Land Registry Services is moving its Sydney CBD office",
+          "location": "Sydney CBD",
+          "opportunity": "Pre-move deep cleans, post-move cleans, and transition support for a government office.",
+          "recommendedAction": "Approach nearby facilities and property contacts before the October-November move window.",
+          "summary": "LRS says it plans to relocate its Sydney CBD office in October or November 2026 and expects no customer service disruption during the move.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Institution of Surveyors NSW",
+              "url": "https://www.surveyors.org.au/news-item/23428/nsw-lrs-office-relocation-planned-for-later-this-year"
+            }
+          ]
+        },
+        {
+          "title": "North Sydney keeps pulling premium tenants",
+          "location": "North Sydney / 118 Mount Street",
+          "opportunity": "Recurring cleaning and facilities work around newer, higher-amenity office stock.",
+          "recommendedAction": "Target North Sydney landlords and project teams for ongoing service contracts.",
+          "summary": "Georgiou says its new office at 118 Mount Street gives it a brighter, better-amenitized workplace and a stronger client-facing base.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Georgiou",
+              "url": "https://www.georgiou.com.au/highlights/georgiou-relocates-new-sydney-office"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "commercial-cleaning",
+      "title": "2. Commercial Cleaning Industry",
+      "headline": "Public-sector cleaning work is open, but the July payroll reset will squeeze margins.",
+      "bullets": [
+        "buy.nsw still has open cleaning and housekeeping work on the board.",
+        "Award wages rise again on 1 July, so contract pricing needs a reset now.",
+        "Payroll, timesheets, and casual loadings should be checked before the new rates hit."
+      ],
+      "items": [
+        {
+          "title": "Open NSW cleaning and housekeeping tender",
+          "location": "NSW",
+          "opportunity": "Public-sector cleaning and housekeeping work with a mid-July close date.",
+          "recommendedAction": "Check the scope quickly and decide whether to bid direct or subcontract.",
+          "summary": "buy.nsw shows a live 'Catering, Cleaning & Housekeeping Services' opportunity closing 20 Jul 2026 at 3pm.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "buy.nsw",
+              "url": "https://buy.nsw.gov.au/opportunity/search?page=12&sort=Ascending"
+            },
+            {
+              "label": "buy.nsw",
+              "url": "https://buy.nsw.gov.au/opportunity/search?page=2&types=Tenders"
+            }
+          ]
+        },
+        {
+          "title": "Cleaning payrolls need a 1 July reset",
+          "location": "Australia",
+          "opportunity": "Higher labour costs will hit contract cleaning margins if pricing is not updated.",
+          "recommendedAction": "Reprice contracts, audit casual loadings, and update payroll templates before 1 July.",
+          "summary": "The Fair Work Commission has set modern award wages to rise by 4.75% from the first full pay period on or after 1 July 2026, with the national minimum wage moving to $26.44 per hour or $1,004.90 per week.",
+          "urgent": true,
+          "sources": [
+            {
+              "label": "Fair Work Commission",
+              "url": "https://www.fwc.gov.au/hearings-decisions/major-cases/annual-wage-reviews/annual-wage-review-2026"
+            },
+            {
+              "label": "Fair Work Ombudsman",
+              "url": "https://www.fairwork.gov.au/about-us/workplace-laws/annual-wage-review/annual-wage-review-2026"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "recession-proof",
+      "title": "3. Recession & AI-Proof Business Opportunities",
+      "headline": "The boring businesses are still the ones that look safest.",
+      "bullets": [
+        "Cleaning, property services, and maintenance keep showing up as durable categories.",
+        "Franchise models are still being sold as lower-risk ways to buy recurring revenue.",
+        "Look for contract-heavy businesses with repeat billing and simple operations."
+      ],
+      "items": [
+        {
+          "title": "AMC pitches commercial cleaning as recession-proof",
+          "location": "Australia-wide",
+          "opportunity": "Franchise or territory-based acquisition in recurring commercial cleaning.",
+          "recommendedAction": "Compare the territory economics against your own contract cleaning pipeline before leaning in.",
+          "summary": "AMC says its commercial cleaning franchise offers guaranteed customers, more than 25 years of industry experience, and structured training.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "AMC Commercial Cleaning",
+              "url": "https://www.amcclean.com.au/franchise"
+            }
+          ]
+        },
+        {
+          "title": "Cleantastic is still selling guaranteed-revenue cleaning franchises",
+          "location": "Australia-wide",
+          "opportunity": "Low-capex recurring revenue model for buyers who want a system, not a blank slate.",
+          "recommendedAction": "Use it as a benchmark if you are comparing franchise versus independent acquisition.",
+          "summary": "Cleantastic markets commercial cleaning franchises with structured training and says the model can deliver guaranteed revenue.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Cleantastic",
+              "url": "https://www.cleantastic.com/commercial-cleaning-franchise"
+            }
+          ]
+        },
+        {
+          "title": "Australia's 'boring business' list still favors essentials",
+          "location": "Australia",
+          "opportunity": "Acquisition targets in property maintenance, building maintenance, and cleaning.",
+          "recommendedAction": "Treat this as a lead list for adjacent acquisition or partnership targets.",
+          "summary": "Business For Sale's 2026 guide says recession-resistant categories include property-related services, healthcare and care services, and cleaning services.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Business For Sale",
+              "url": "https://www.businessforsale.com.au/business-advice/50-boring-businesses-that-could-make-you-rich-in-2026"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "investment-news",
+      "title": "4. Investment News",
+      "headline": "Quality office assets are still getting the traffic, while crypto remains choppy.",
+      "bullets": [
+        "Sydney CBD tenants are still choosing higher-quality space over commodity stock.",
+        "Bitcoin volatility remains high after another early-June drop.",
+        "Commercial real estate debt looks a little less frozen than it did in the last tightening cycle."
+      ],
+      "items": [
+        {
+          "title": "Sydney CBD office demand still favors quality",
+          "location": "Sydney CBD",
+          "opportunity": "A-grade office assets and premium fitouts still look best positioned.",
+          "recommendedAction": "Focus on buildings with strong amenity, better ESG scores, and lower churn risk.",
+          "summary": "Property Council data says Sydney CBD vacancy held at 13.8% through January 2026 and tenant demand is still focused on higher-quality space.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Property Council Australia",
+              "url": "https://www.propertycouncil.com.au/news-research/research/office-market-report"
+            }
+          ]
+        },
+        {
+          "title": "Bitcoin stumbled again in early June",
+          "location": "Global",
+          "opportunity": "Crypto exposure is still high-beta and should stay small if you use it at all.",
+          "recommendedAction": "Keep any crypto positions speculative and size them conservatively.",
+          "summary": "Reuters reported Bitcoin fell 4% on 3 June 2026 to its lowest level since 28 February.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Reuters",
+              "url": "https://www.reuters.com/business/bitcoin-falls-4-over-three-month-low-2026-06-03"
+            }
+          ]
+        },
+        {
+          "title": "Commercial real estate capital looks a bit more available",
+          "location": "Global / APAC",
+          "opportunity": "Refinancing and acquisition windows may improve if credit keeps thawing.",
+          "recommendedAction": "Watch broker and lender chatter for refinancing, recap, and distressed-sale opportunities.",
+          "summary": "Reuters said more capital is coming back to commercial real estate as lenders continue to work through post-rate-shock loans.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "Reuters",
+              "url": "https://www.reuters.com/video/watch/idRW961211052026RP1"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "laws-regulations",
+      "title": "5. Australian Laws & Regulations",
+      "headline": "July compliance is the big one: super, AML/CTF, and AI/WHS rules are all moving.",
+      "bullets": [
+        "Payday super starts 1 July 2026 and changes how every employer handles super payments.",
+        "AML/CTF tranche 2 brings accountants, conveyancers, real estate agents, and trust/company service providers into scope from 1 July.",
+        "NSW's digital work systems law means AI and automation need WHS treatment, not just IT treatment."
+      ],
+      "items": [
+        {
+          "title": "Payday super and AML/CTF compliance are about to hit",
+          "location": "NSW / Australia",
+          "opportunity": "Payroll process changes and, for some businesses, a fresh compliance service line.",
+          "recommendedAction": "Update super workflows now and note AML/CTF obligations if you touch property or professional services work.",
+          "summary": "The NSW Small Business Commissioner says payday super starts on 1 July 2026 and super contributions must reach funds within 7 business days of each payday; the same page flags federal AML/CTF tranche 2 reforms starting 1 July 2026.",
+          "urgent": true,
+          "sources": [
+            {
+              "label": "NSW Small Business Commissioner",
+              "url": "https://www.smallbusiness.nsw.gov.au/news-podcasts/news/what-nsw-small-businesses-need-to-know-new-laws-new-rules-new-opportunities-in-2026"
+            }
+          ]
+        },
+        {
+          "title": "NSW has moved on digital work systems in WHS law",
+          "location": "NSW",
+          "opportunity": "If you use rostering, automation, or AI tools, you now need a formal WHS lens on them.",
+          "recommendedAction": "Review how AI, automation, and online platforms are used in the workplace and document the WHS controls.",
+          "summary": "The Work Health and Safety Amendment (Digital Work Systems) Act 2026 is on the NSW legislation register and industry updates say it creates a new WHS duty around digital work systems.",
+          "urgent": false,
+          "sources": [
+            {
+              "label": "NSW Legislation",
+              "url": "https://legislation.nsw.gov.au/view/html/inforce/current/act-2026-005"
+            },
+            {
+              "label": "DLA Piper",
+              "url": "https://knowledge.dlapiper.com/dlapiperknowledge/globalemploymentlatestdevelopments/2026/New-South-Wales-government-passes-nation-first-work-health-and-safety-obligations-for-digital-work-systems-"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
