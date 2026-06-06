@@ -196,9 +196,15 @@ function StatCard({
 function Sidebar({
   activeView,
   onViewChange,
+  variant = 'desktop',
+  open = false,
+  onClose,
 }: {
   activeView: View
   onViewChange: (view: View) => void
+  variant?: 'desktop' | 'mobile'
+  open?: boolean
+  onClose?: () => void
 }) {
   const items: Array<[View, string, string]> = [
     ['overview', 'Overview', 'Usage and system'],
@@ -208,16 +214,39 @@ function Sidebar({
     ['tenders', 'Tenders', 'Pipeline watch'],
   ]
 
+  function handleNavigate(view: View) {
+    onViewChange(view)
+    if (variant === 'mobile') onClose?.()
+  }
+
   return (
-    <aside className="sidebar">
-      <div className="brand-lockup">
-        <span>W</span>
-        <div>
-          <strong>Wallace</strong>
-          <p>Control room</p>
+    <aside
+      className={`sidebar sidebar-${variant} ${variant === 'mobile' && open ? 'is-open' : ''}`}
+      aria-hidden={variant === 'mobile' ? !open : undefined}
+    >
+      {variant === 'mobile' ? (
+        <div className="sidebar-mobile-head">
+          <div className="brand-lockup">
+            <span>W</span>
+            <div>
+              <strong>Wallace</strong>
+              <p>Control room</p>
+            </div>
+          </div>
+          <button className="sidebar-close" type="button" onClick={onClose} aria-label="Close menu">
+            Close
+          </button>
         </div>
-      </div>
-      <button className="primary-action" onClick={() => onViewChange('work')} type="button">
+      ) : (
+        <div className="brand-lockup">
+          <span>W</span>
+          <div>
+            <strong>Wallace</strong>
+            <p>Control room</p>
+          </div>
+        </div>
+      )}
+      <button className="primary-action" onClick={() => handleNavigate('work')} type="button">
         Open CRM
         <span>+</span>
       </button>
@@ -226,7 +255,7 @@ function Sidebar({
           <button
             key={value}
             className={activeView === value ? 'active' : ''}
-            onClick={() => onViewChange(value)}
+            onClick={() => handleNavigate(value)}
             type="button"
           >
             <strong>{label}</strong>
@@ -540,11 +569,56 @@ function TopBar({ generatedAt }: { generatedAt: string }) {
   )
 }
 
+function MobileTopBar({
+  generatedAt,
+  activeView,
+  onMenuToggle,
+  menuOpen,
+}: {
+  generatedAt: string
+  activeView: View
+  onMenuToggle: () => void
+  menuOpen: boolean
+}) {
+  const labels: Record<View, string> = {
+    overview: 'Overview',
+    news: 'News intel',
+    work: 'CRM',
+    deals: 'Deals',
+    tenders: 'Tenders',
+  }
+
+  return (
+    <header className="mobile-topbar">
+      <div className="mobile-topbar-copy">
+        <p>Wallace dashboard</p>
+        <strong>{labels[activeView]}</strong>
+        <span>
+          Updated{' '}
+          {new Date(generatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+        </span>
+      </div>
+      <button
+        className="mobile-menu-button"
+        type="button"
+        onClick={onMenuToggle}
+        aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+        aria-expanded={menuOpen}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+    </header>
+  )
+}
+
 function App() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [reloadTick, setReloadTick] = useState(0)
   const [activeView, setActiveView] = useState<View>('overview')
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     let alive = true
@@ -574,6 +648,19 @@ function App() {
       window.clearInterval(timer)
     }
   }, [reloadTick])
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [activeView])
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth > 920) setMenuOpen(false)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const summary = useMemo(() => {
     if (!data) return null
@@ -624,7 +711,22 @@ function App() {
 
   return (
     <main className="app-shell">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar activeView={activeView} onViewChange={setActiveView} variant="desktop" />
+      <Sidebar
+        activeView={activeView}
+        onViewChange={setActiveView}
+        variant="mobile"
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      />
+      {menuOpen ? (
+        <button
+          type="button"
+          className="mobile-backdrop"
+          aria-label="Close menu"
+          onClick={() => setMenuOpen(false)}
+        />
+      ) : null}
 
       <section className="workspace">
         {error ? (
@@ -638,6 +740,12 @@ function App() {
             </button>
           </section>
         ) : null}
+        <MobileTopBar
+          generatedAt={data.generatedAt}
+          activeView={activeView}
+          onMenuToggle={() => setMenuOpen((value) => !value)}
+          menuOpen={menuOpen}
+        />
         <TopBar generatedAt={data.generatedAt} />
 
       {activeView === 'overview' && (
