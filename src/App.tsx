@@ -66,6 +66,22 @@ const moneyFields = [
   'Estimated Value',
 ]
 
+function createEmptyDashboard(message = 'Airtable is unavailable right now.') {
+  return {
+    generatedAt: new Date().toISOString(),
+    usage: {
+      error: 'offline',
+      message,
+    },
+    news: null,
+    tables: {
+      proposals: [],
+      acquisitions: [],
+      tenders: [],
+    },
+  }
+}
+
 function text(value: unknown, fallback = 'Not set') {
   if (Array.isArray(value)) return value.join(', ')
   if (value === null || value === undefined || value === '') return fallback
@@ -247,7 +263,7 @@ function RecordRow({
   )
 }
 
-function FieldCheck({ data }: { data: DashboardData }) {
+function FieldCheck({ data, connected }: { data: DashboardData; connected: boolean }) {
   const tables = data.tables
   const populatedMoney = moneyFields.filter((field) =>
     [...tables.proposals, ...tables.acquisitions, ...tables.tenders].some((record) =>
@@ -259,7 +275,7 @@ function FieldCheck({ data }: { data: DashboardData }) {
     <section className="panel compact-panel">
       <div className="section-title">
         <p>Data wiring</p>
-        <h2>Airtable is connected</h2>
+        <h2>{connected ? 'Airtable is connected' : 'Airtable is offline'}</h2>
       </div>
       <div className="wiring-grid">
         <span>Work CRM</span>
@@ -527,6 +543,7 @@ function TopBar({ generatedAt }: { generatedAt: string }) {
 function App() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [reloadTick, setReloadTick] = useState(0)
   const [activeView, setActiveView] = useState<View>('overview')
 
   useEffect(() => {
@@ -537,10 +554,15 @@ function App() {
         const response = await fetch('/api/dashboard')
         const payload = await response.json()
         if (!response.ok) throw new Error(payload.message || 'Dashboard API failed')
-        if (alive) setData(payload)
+        if (alive) {
+          setData(payload)
+          setError(null)
+        }
       } catch (loadError) {
         if (alive) {
-          setError(loadError instanceof Error ? loadError.message : 'Unable to load dashboard')
+          const message = loadError instanceof Error ? loadError.message : 'Unable to load dashboard'
+          setError(message)
+          setData((current) => current ?? createEmptyDashboard(message))
         }
       }
     }
@@ -551,7 +573,7 @@ function App() {
       alive = false
       window.clearInterval(timer)
     }
-  }, [])
+  }, [reloadTick])
 
   const summary = useMemo(() => {
     if (!data) return null
@@ -589,18 +611,6 @@ function App() {
     }
   }, [data])
 
-  if (error) {
-    return (
-      <main className="app-shell centered">
-        <section className="panel error-panel">
-          <p>Dashboard offline</p>
-          <h1>Airtable did not answer cleanly.</h1>
-          <span>{error}</span>
-        </section>
-      </main>
-    )
-  }
-
   if (!data || !summary) {
     return (
       <main className="app-shell centered">
@@ -617,6 +627,17 @@ function App() {
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
 
       <section className="workspace">
+        {error ? (
+          <section className="status-banner status-banner-warning" role="status">
+            <div>
+              <strong>Offline mode</strong>
+              <p>{error}. The dashboard is still usable with the last available shell.</p>
+            </div>
+            <button type="button" onClick={() => setReloadTick((value) => value + 1)}>
+              Retry Airtable
+            </button>
+          </section>
+        ) : null}
         <TopBar generatedAt={data.generatedAt} />
 
       {activeView === 'overview' && (
@@ -638,10 +659,14 @@ function App() {
             />
             <StatCard
               label="Airtable sync"
-              value="Live"
-              note={`${summary.proposals.length + summary.acquisitions.length + summary.tenders.length} total records indexed`}
+              value={error ? 'Offline' : 'Live'}
+              note={
+                error
+                  ? 'Browse the dashboard while Airtable reconnects'
+                  : `${summary.proposals.length + summary.acquisitions.length + summary.tenders.length} total records indexed`
+              }
               icon="A"
-              tone="green"
+              tone={error ? 'amber' : 'green'}
             />
             <StatCard
               label="CRM health"
@@ -731,7 +756,7 @@ function App() {
               <p>Airtable live data</p>
             </section>
 
-            <FieldCheck data={data} />
+            <FieldCheck data={data} connected={!error} />
           </section>
         </>
       )}
