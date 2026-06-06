@@ -304,9 +304,12 @@ function MobileHeader({
           aria-label={menuOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={menuOpen}
         >
-          <span />
-          <span />
-          <span />
+          <span className="mobile-menu-icon" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+          <strong>Menu</strong>
         </button>
       </div>
     </header>
@@ -840,6 +843,10 @@ function App() {
           </section>
 
           <section className="dashboard-grid">
+            <section className="panel wide-panel model-panel">
+              <ModelUsagePanel usage={data.usage} generatedAt={data.generatedAt} />
+            </section>
+
             <NewsTeaserPanel report={summary.news} />
 
             <section className="panel trend-panel">
@@ -875,10 +882,6 @@ function App() {
                   <strong>{summary.nextActions.length}</strong>
                 </div>
               </div>
-            </section>
-
-            <section className="panel wide-panel">
-              <ModelUsagePanel usage={data.usage} generatedAt={data.generatedAt} />
             </section>
 
             <section className="panel division-panel">
