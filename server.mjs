@@ -30,6 +30,13 @@ const SOURCES = {
 }
 
 async function readToken() {
+  const token = process.env.AIRTABLE_TOKEN?.trim()
+  if (token) return token
+
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    throw new Error('AIRTABLE_TOKEN is not set in Vercel.')
+  }
+
   const body = await readFile(ENV_FILE, 'utf8')
   for (const rawLine of body.split(/\r?\n/)) {
     const line = rawLine.trim()

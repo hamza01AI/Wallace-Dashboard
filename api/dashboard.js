@@ -34,17 +34,28 @@ function getToken() {
   const token = process.env.AIRTABLE_TOKEN?.trim()
   if (token) return token
 
+  if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+    throw new Error('AIRTABLE_TOKEN is not set in Vercel.')
+  }
+
   const envFile = join(homedir(), '.config', 'wallace', 'airtable.env')
-  return readFile(envFile, 'utf8').then((body) => {
-    for (const rawLine of body.split(/\r?\n/)) {
-      const line = rawLine.trim()
-      if (!line || line.startsWith('#')) continue
-      const match = line.match(/^AIRTABLE_TOKEN=(.*)$/)
-      if (!match) continue
-      return match[1].replace(/^['"]|['"]$/g, '').trim()
-    }
-    throw new Error('AIRTABLE_TOKEN is missing.')
-  })
+  return readFile(envFile, 'utf8')
+    .then((body) => {
+      for (const rawLine of body.split(/\r?\n/)) {
+        const line = rawLine.trim()
+        if (!line || line.startsWith('#')) continue
+        const match = line.match(/^AIRTABLE_TOKEN=(.*)$/)
+        if (!match) continue
+        return match[1].replace(/^['"]|['"]$/g, '').trim()
+      }
+      throw new Error('AIRTABLE_TOKEN is missing.')
+    })
+    .catch((error) => {
+      if (error instanceof Error && 'code' in error && error.code === 'ENOENT') {
+        throw new Error('AIRTABLE_TOKEN is missing. Set it locally or in Vercel.')
+      }
+      throw error
+    })
 }
 
 async function airtableFetch(token, path, params = {}) {
